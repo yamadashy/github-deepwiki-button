@@ -1,52 +1,50 @@
-const injectContentToTab = async (tab: chrome.tabs.Tab): Promise<void> => {
-  // Skip if URL is undefined
-  if (!tab.url) {
+const injectContentToTab = async (tab: chrome.tabs.Tab) => {
+  // Do not have permission
+  if (tab.url === undefined) {
     return;
   }
 
-  // Skip if tab is discarded
+  // Skip execute on discarded tab
   if (tab.discarded) {
     return;
   }
 
-  // Skip if tab ID is undefined
+  // Under some circumstances a Tab may not be assigned an ID
   if (tab.id === undefined) {
     return;
   }
 
-  // Skip if not a GitHub URL
-  if (!tab.url.startsWith('https://github.com/')) {
-    return;
+  const manifest = chrome.runtime.getManifest();
+  const cssFiles = manifest.content_scripts?.[0].css ?? [];
+  const jsFiles = manifest.content_scripts?.[0].js ?? [];
+
+  if (cssFiles.length > 0) {
+    await chrome.scripting.insertCSS({
+      target: {
+        tabId: tab.id,
+        allFrames: true,
+      },
+      files: cssFiles,
+    });
   }
-
-  try {
-    const manifest = chrome.runtime.getManifest();
-
-    // Inject CSS
-    if (manifest.content_scripts?.[0]?.css) {
-      await chrome.scripting.insertCSS({
-        target: { tabId: tab.id },
-        files: manifest.content_scripts[0].css,
-      });
-    }
-
-    // Inject JavaScript
-    if (manifest.content_scripts?.[0]?.js) {
-      await chrome.scripting.executeScript({
-        target: { tabId: tab.id },
-        files: manifest.content_scripts[0].js,
-      });
-    }
-  } catch (error) {
-    console.error('Error injecting content script:', error);
+  if (jsFiles.length > 0) {
+    await chrome.scripting.executeScript({
+      target: {
+        tabId: tab.id,
+        allFrames: true,
+      },
+      files: jsFiles,
+    });
   }
 };
 
 // Update extension content for tabs
-chrome.tabs.query({}, async (tabs: chrome.tabs.Tab[]) => {
-  for (const tab of tabs) {
+chrome.tabs.query({}, async (tabs) => {
+  for (const tabKey in tabs) {
+    const tab = tabs[tabKey];
+
     try {
-      await injectContentToTab(tab);
+      injectContentToTab(tab);
     } catch (e) {
       console.error(e);
     }
