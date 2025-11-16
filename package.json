@@ -3,9 +3,13 @@
   "name": "github-deepwiki",
   "description": "GitHub repositories documentation generator with AI",
   "scripts": {
-    "dev": "webextension-toolbox dev",
-    "build": "webextension-toolbox build",
-    "build-all": "npm run build chrome && npm run build firefox && npm run build edge",
+    "dev": "wxt",
+    "dev:firefox": "wxt -b firefox",
+    "build": "wxt build",
+    "build:firefox": "wxt build -b firefox",
+    "build-all": "wxt build && wxt build -b firefox",
+    "zip": "wxt zip",
+    "zip:firefox": "wxt zip -b firefox",
     "generate-icons": "tsx scripts/generate-icons.ts",
     "lint": "npm run lint-biome && npm run lint-tsc && npm run lint-secretlint",
     "lint-biome": "biome check --write",
@@ -37,11 +41,11 @@
     "@types/chrome": "^0.0.323",
     "@types/node": "^22.10.2",
     "@types/webextension-polyfill": "^0.10.7",
-    "@webextension-toolbox/webextension-toolbox": "^7.1.1",
     "secretlint": "^9.3.1",
     "sharp": "^0.34.1",
     "tsx": "^4.19.2",
-    "typescript": "^5.8.3"
+    "typescript": "^5.8.3",
+    "wxt": "^0.20.11"
   },
   "browserslist": [
     "last 2 versions, not dead, > 0.2%"

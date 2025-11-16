@@ -1,18 +1,33 @@
 {
   "compilerOptions": {
     "strict": true,
-    "target": "esnext",
-    "module": "commonjs",
-    "moduleResolution": "node",
+    "target": "ES2022",
+    "module": "ESNext",
+    "moduleResolution": "Bundler",
     "esModuleInterop": true,
     "lib": [
-      "dom",
-      "esnext"
+      "DOM",
+      "ES2022"
     ],
     "allowJs": false,
     "noImplicitAny": true,
     "removeComments": true,
     "skipLibCheck": true,
-    "sourceMap": true
-  }
+    "sourceMap": true,
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "verbatimModuleSyntax": true
+  },
+  "include": [
+    "entrypoints/**/*",
+    "components/**/*",
+    "utils/**/*",
+    "styles/**/*",
+    "wxt.config.ts",
+    ".wxt/wxt.d.ts"
+  ],
+  "exclude": [
+    "node_modules",
+    ".output"
+  ]
 }
